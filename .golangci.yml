@@ -1,6 +1,9 @@
-linters:
+version: "2"
+formatters:
   enable:
     - gofmt
+linters:
+  enable:
     - govet
     - errcheck
     - staticcheck
@@ -9,8 +12,3 @@ linters:
     - misspell
 run:
   timeout: 5m
-issues:
-  exclude-rules:
-    # Menutup response body di test boleh diabaikan
-    - linters: [errcheck]
-      text: "Close"

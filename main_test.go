@@ -30,7 +30,7 @@ func doRequest(t *testing.T, app interface {
 
 func readBody(t *testing.T, resp *http.Response) map[string]any {
 	t.Helper()
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("baca body: %v", err)
@@ -91,7 +91,7 @@ func TestListKosFilter(t *testing.T) {
 	if resp.StatusCode != http.StatusBadRequest {
 		t.Fatalf("filter max_harga invalid: status = %d, mau 400", resp.StatusCode)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 }
 
 func TestGetKosByID(t *testing.T) {
@@ -109,13 +109,13 @@ func TestGetKosByID(t *testing.T) {
 	if resp.StatusCode != http.StatusNotFound {
 		t.Fatalf("get id 99: status = %d, mau 404", resp.StatusCode)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 
 	resp = doRequest(t, app, http.MethodGet, "/api/kos/abc", "")
 	if resp.StatusCode != http.StatusBadRequest {
 		t.Fatalf("get id abc: status = %d, mau 400", resp.StatusCode)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 }
 
 func TestCreateKos(t *testing.T) {
@@ -135,20 +135,20 @@ func TestCreateKos(t *testing.T) {
 	if resp.StatusCode != http.StatusBadRequest {
 		t.Fatalf("create nama kosong: status = %d, mau 400", resp.StatusCode)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 
 	resp = doRequest(t, app, http.MethodPost, "/api/kos", `{"nama":"Kos X","harga":0}`)
 	if resp.StatusCode != http.StatusBadRequest {
 		t.Fatalf("create harga 0: status = %d, mau 400", resp.StatusCode)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 
 	// Body bukan JSON ditolak.
 	resp = doRequest(t, app, http.MethodPost, "/api/kos", `{bukan json`)
 	if resp.StatusCode != http.StatusBadRequest {
 		t.Fatalf("create body invalid: status = %d, mau 400", resp.StatusCode)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 }
 
 func TestUpdateAndDeleteKos(t *testing.T) {
@@ -168,19 +168,19 @@ func TestUpdateAndDeleteKos(t *testing.T) {
 	if resp.StatusCode != http.StatusNotFound {
 		t.Fatalf("update id 99: status = %d, mau 404", resp.StatusCode)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 
 	resp = doRequest(t, app, http.MethodDelete, "/api/kos/2", "")
 	if resp.StatusCode != http.StatusNoContent {
 		t.Fatalf("delete: status = %d, mau 204", resp.StatusCode)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 
 	resp = doRequest(t, app, http.MethodGet, "/api/kos/2", "")
 	if resp.StatusCode != http.StatusNotFound {
 		t.Fatalf("get setelah delete: status = %d, mau 404", resp.StatusCode)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 
 	// ID baru setelah hapus tidak boleh tabrakan: max ID yang ada + 1.
 	resp = doRequest(t, app, http.MethodPost, "/api/kos",
