@@ -1,0 +1,29 @@
+# Binaries
+*.exe
+*.dll
+*.so
+*.dylib
+go-kos-api
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of `go coverage`
+*.out
+coverage.html
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# Environment — jangan pernah commit file ini
+.env
+
+# Editor / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store

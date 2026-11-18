@@ -1,0 +1,16 @@
+linters:
+  enable:
+    - gofmt
+    - govet
+    - errcheck
+    - staticcheck
+    - ineffassign
+    - unused
+    - misspell
+run:
+  timeout: 5m
+issues:
+  exclude-rules:
+    # Menutup response body di test boleh diabaikan
+    - linters: [errcheck]
+      text: "Close"
